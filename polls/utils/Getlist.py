@@ -3,7 +3,7 @@ import xlrd
 from polls.models.News import News
 
 
-def get_list(indexList):
+def get_list(indexList,tokens):
     loc = ("polls/IR-F19-Project01-Input.xlsx")
 
     # To open Workbook
@@ -17,6 +17,8 @@ def get_list(indexList):
 
     for i in indexList:
         news = News()
+        news.id = i
+
         news.publish_date = sheet.cell_value(i, 0)
         news.title = sheet.cell_value(i, 1)
         news.url = sheet.cell_value(i, 2)
@@ -26,3 +28,5 @@ def get_list(indexList):
         news.thumbnail = sheet.cell_value(i, 6)
         list.append(news)
     return list
+
+

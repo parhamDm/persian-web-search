@@ -10,7 +10,7 @@
     <div class="section page-title">
         <span>اخبار</span>
         «
-        <h1>خط 7 مترو</h1>»
+{#        <h1>خط 7 مترو</h1>»#}
     </div>
     <div class="section">
         <div>
@@ -24,14 +24,14 @@
     </a>
     <div class="news-snippet-body full-width">
         <div>
-            <a href="{{ news.url }}" target="_blank" class="news-box-source">
-                {{ news.title }}</a>
+            <a href="/news?id={{ news.id }}" target="_blank" class="news-box-source">
+                {{ news.url }}</a>
             <span class="text-gray"> | </span>
             <time class="news-box-time" data-time="11/4/2019 3:26:48 PM" datetime="2019-11-04T03:26:48">
                 {{ news.publish_date }}</time>
         </div>
     </div>
-    <a href="{{ news.url }}" target="_blank">
+    <a href="/news?id={{ news.id }}" target="_blank">
         <h2> {{ news.title }} <span> </span></h2>
         <p>{{ news.summery }}</p>
         <div style="clear: both;"></div>

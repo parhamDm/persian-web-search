@@ -1,10 +1,51 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>$Title$</title>
-</head>
-<body>
-$END$
-</body>
-</html>
+{% extends 'master.html' %}
+
+   {% block title %}{{ title }}{% endblock title %}
+
+   {% block content %}
+
+
+
+
+
+
+<div class="news-page">
+
+    <div class="news-link np-sec ">
+        <div class="news-pretitle"></div>
+            <h1 style="color: black">{{ item.title }}</h1>
+
+        <div class="news-source">
+            <a class="source vm-item" href="/" target="_blank">
+                    <img data-src="//cdn2.sls.ir/tnews2/images/favicons/456/favicon.ico" class="favicon lazy-image lazy-loaded" alt="خبرگزاری تسنیم" src="//cdn2.sls.ir/tnews2/images/favicons/456/favicon.ico" data-was-processed="true">
+                {{item.src}}</a>
+
+            <span style="color: black" class="time vm-item">{{ data.publish_date }}</span>
+        </div>
+    </div>
+
+        <div id="news-images-container" class="np-sec" style=""><div class="matrix-gallery mg-single"><div class="mg-section"><div class="mg-item "><img data-index="0" src="{{ item.thumbnail }}" class="lazy-image mg-cover lazy-loaded" data-was-processed="true"></div></div></div></div>
+
+    <div class="show-more-container">
+            <div class="news-desc np-sec" id="desc">
+                <strong>{{item.summery}}</strong>
+            </div>
+
+            <div class="news-body-container np-sec">
+                <p id="news-body">
+                    {{ item.content|safe  }}
+                </p>
+            </div>
+
+    </div>
+
+    <div class="fixclear"></div>
+
+    <div class=" np-sec ">
+
+
+    </div>
+
+</div>
+
+   {% endblock content %}

@@ -18,8 +18,15 @@ from django.urls import path
 
 from polls import views
 
+from polls.utils.Indexer import Index
+from polls.utils.Search import Search
+
+i = Index("database/IR-F19-Project01-Input.xlsx","database/stopwords.xlsx", "database/dictionary.txt")
+
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', views.index, name='index'),
     path('search/', views.search, name='search'),
+    path('news/', views.news, name='search'),
+    path('getChars/', views.getChars, name='getChars'),
 ]
