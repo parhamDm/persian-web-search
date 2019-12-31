@@ -29,14 +29,14 @@ class TfIdf:
         idf = {}
         lemmatizer = Lemmatizer()
         normalizer = Normalize()
+        tokenizer = WordTokenizer(join_verb_parts=True)
+
         list = []
         for i in range(1, self.sheet.nrows):  # self.sheet.nrows):
             print(i)
             content = self.sheet.cell_value(i, 5)
-
             content = self.remove_tags(content)
             content = normalizer.normalize(content)
-            tokenizer = WordTokenizer(join_verb_parts=True)
             content_tokens = tokenizer.tokenize(content)
             try:
                 content_tokens = content.split()
@@ -50,7 +50,7 @@ class TfIdf:
                     continue
                     # print('this can be: ' + content_tokens[j])
                 j = lemmatizer.lemmatize(j)
-                j = normalizer.convert(j)
+                #j = normalizer.convert(j)
                 # print('this cannot be: ' + content_tokens[j])
                 if (j in idf) and (j not in tf):
                     idf[j] += 1

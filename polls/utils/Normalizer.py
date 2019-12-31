@@ -1,9 +1,6 @@
 import re
 
-import xlrd
-import csv
-import collections
-
+from polls.utils.filereader import fileReader
 from polls.utils.defaults import maketrans
 from polls.utils.lemmatizer import Lemmatizer
 from polls.utils.wordTokenizer import WordTokenizer
@@ -12,10 +9,11 @@ from polls.utils.wordTokenizer import WordTokenizer
 compile_patterns = lambda patterns: [(re.compile(pattern), repl) for pattern, repl in patterns]
 class Normalize:
     def __init__(self, remove_extra_spaces=True, persian_style=True, persian_numbers=True, remove_diacritics=True,
-                 affix_spacing=True, token_based=False, punctuation_spacing=True):
+                 affix_spacing=True, token_based=False, punctuation_spacing=True,twofaced_words= True):
         self._punctuation_spacing = punctuation_spacing
         self._affix_spacing = affix_spacing
         self._token_based = token_based
+        self._twofaced_words= True
 
         translation_src, translation_dst = ' ىكي“”', ' یکی""'
         if persian_numbers:
@@ -86,9 +84,18 @@ class Normalize:
 
         if self._punctuation_spacing:
             text = self.punctuation_spacing(text)
+        if self._twofaced_words:
+            text = self.twofaced(text)
 
         return text
 
+    def twofaced(self,text):
+        f = fileReader("database/twoface.xlsx")
+        sheet = f.read_file()
+        for i in range(sheet.nrows):
+            if sheet.cell_value(i,1) in text:
+                text = text.replace(sheet.cell_value(i,1),sheet.cell_value(i,0))
+        return text
     def character_refinement(self, text):
 
         text = text.translate(self.translations)
@@ -132,35 +139,35 @@ class Normalize:
                 result.append(token)
 
         return result
-    def detect_characters(self):
-        loc = "database/IR-F19-Project01-Input.xlsx"
-        wb = xlrd.open_workbook(loc)
-        self.sheet = wb.sheet_by_index(0)
-        self.characters = {}
-        for i in range(0,1000) :
-            for c in self.sheet.cell_value(i,5):
-                if c in self.characters:
-                    self.characters[c] = 1 + self.characters[c]
-                else:
-                    self.characters[c] =0
-        self.characters = collections.OrderedDict(sorted(self.characters.items()))
-        with open('dict.csv', 'w', newline="",encoding="utf8") as csv_file:
-            writer = csv.writer(csv_file)
-            for key, value in self.characters.items():
-                writer.writerow([key, value,key.encode("unicode_escape")])
-
-        print(self.characters)
-
-    def read_map(self):
-        with open('normalizer4.csv',encoding="utf8") as csv_file:
-            reader = csv.reader(csv_file)
-            self.mydict = dict(reader)
-        # print(self.mydict)
-
-    def convert(self, string):
-        self.read_map()
-        stringBuffer = ""
-        for s in string:
-            if s in self.mydict:
-                stringBuffer = stringBuffer + self.mydict[s]
-        return stringBuffer
+    # def detect_characters(self):
+    #     loc = "database/IR-F19-Project01-Input.xlsx"
+    #     wb = xlrd.open_workbook(loc)
+    #     self.sheet = wb.sheet_by_index(0)
+    #     self.characters = {}
+    #     for i in range(0,1000) :
+    #         for c in self.sheet.cell_value(i,5):
+    #             if c in self.characters:
+    #                 self.characters[c] = 1 + self.characters[c]
+    #             else:
+    #                 self.characters[c] =0
+    #     self.characters = collections.OrderedDict(sorted(self.characters.items()))
+    #     with open('dict.csv', 'w', newline="",encoding="utf8") as csv_file:
+    #         writer = csv.writer(csv_file)
+    #         for key, value in self.characters.items():
+    #             writer.writerow([key, value,key.encode("unicode_escape")])
+    #
+    #     print(self.characters)
+    #
+    # def read_map(self):
+    #     with open('normalizer4.csv',encoding="utf8") as csv_file:
+    #         reader = csv.reader(csv_file)
+    #         self.mydict = dict(reader)
+    #     # print(self.mydict)
+    #
+    # def convert(self, string):
+    #     self.read_map()
+    #     stringBuffer = ""
+    #     for s in string:
+    #         if s in self.mydict:
+    #             stringBuffer = stringBuffer + self.mydict[s]
+    #     return stringBuffer

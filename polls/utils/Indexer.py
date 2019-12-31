@@ -130,22 +130,20 @@ class Index:
         list = []
         normalizer = Normalize()
         lemmatizer = Lemmatizer()
+        tokenizer = WordTokenizer(join_verb_parts=True)
 
-        for i in range(1, self.doc_count):  # self.sheet.nrows):
-            print(i)
+        for i in range(1, self.sheet.nrows):  # ):
             content = self.sheet.cell_value(i, self.content_index)
             content = self.remove_tags(content)
             content = normalizer.normalize(content)
-            tokenizer = WordTokenizer(join_verb_parts=True)
             content_tokens = tokenizer.tokenize(content)
 
-            # print(content_tokens)
+            print(i)
             for j in range(len(content_tokens)):
                 if content_tokens[j] == 'ها' or content_tokens[j] == 'می':
                     continue
                 #print('this can be: ' + content_tokens[j])
                 content_tokens[j] = lemmatizer.lemmatize(content_tokens[j])
-                content_tokens[j] = normalizer.convert(content_tokens[j])
                 #print('this cannot be: ' + content_tokens[j])
                 try:
                     li = list.index(content_tokens[j])
