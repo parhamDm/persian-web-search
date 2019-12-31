@@ -1,13 +1,12 @@
 import xlrd
 
 from polls.models.News import News
-
+from polls.utils.global_excel import workbook
 
 def get_list(indexList,tokens):
-    loc = ("polls/IR-F19-Project01-Input.xlsx")
 
     # To open Workbook
-    wb = xlrd.open_workbook(loc)
+    wb = workbook
     sheet = wb.sheet_by_index(0)
 
     # For row 0 and column 0

@@ -1,40 +1,18 @@
 import xlrd
 import re
-import shlex
 import ast
 from pathlib import Path
 
-
-class Word:
-    def addNewWord(self, word, index, position):
-        self.word = word
-        self.index = [index]
-        self.freq = [1]
-        self.position = [[position]]
-
-    def addFromFile(self, word, index, freq, position):
-        self.word = word
-        self.index = index
-        self.freq = freq
-        self.position = position
-
-    def add_to_index(self, index, position):
-        if (index not in self.index):
-            self.index.append(index)
-            self.freq.append(1)
-            self.position.append([position])
-        else:
-            i = self.index.index(index)
-            self.position[i].append(position)
-            self.freq[i] += 1
-        self.freq = [x for (y, x) in sorted(zip(self.index, self.freq), key=lambda pair: pair[0])]
-        self.position = [x for (y, x) in sorted(zip(self.index, self.position), key=lambda pair: pair[0])]
-        self.index = [y for y in sorted(self.index)]
+from .tokenizer import Tokenizer
+from .lemmatizer import Lemmatizer
+from .word import Word
+from .Normalizer import Normalize
+from .wordTokenizer import WordTokenizer
 
 
 class Index:
     content_index = 5
-    doc_count = 5000
+    doc_count = 10
 
     def read_file(self, address):
         loc = (address)
@@ -59,10 +37,6 @@ class Index:
             if w.word == token and index in w.index:
                 return w.position[w.index.index(index)]
         return []
-
-    def remove_tags(self, text):
-        TAG_RE = re.compile(r'<.*?>|&([a-z0-9]+|#[0-9]{1,6}|#x[0-9a-f]{1,6});|[،.؛:()_\-@#{}\[\]!«»",]')
-        return TAG_RE.sub(' ', text)
 
     def find_text(self, text):
         index_list = []
@@ -148,18 +122,31 @@ class Index:
                     # print(w)
                 self.word_index.append(w)
                 first_line = f.readline()[:-1]
+    def remove_tags(self, text):
+        TAG_RE = re.compile(r'<.*?>|&([a-z0-9]+|#[0-9]{1,6}|#x[0-9a-f]{1,6});|[،.؛:()_\-@#{}\[\]!«»",]')
+        return TAG_RE.sub(' ', text)
 
     def index(self, path):
         list = []
+        normalizer = Normalize()
+        lemmatizer = Lemmatizer()
+
         for i in range(1, self.doc_count):  # self.sheet.nrows):
+            print(i)
             content = self.sheet.cell_value(i, self.content_index)
             content = self.remove_tags(content)
-            try:
-                content_tokens = content.split()
-            except:
-                print("error occured")
+            content = normalizer.normalize(content)
+            tokenizer = WordTokenizer(join_verb_parts=True)
+            content_tokens = tokenizer.tokenize(content)
+
             # print(content_tokens)
             for j in range(len(content_tokens)):
+                if content_tokens[j] == 'ها' or content_tokens[j] == 'می':
+                    continue
+                #print('this can be: ' + content_tokens[j])
+                content_tokens[j] = lemmatizer.lemmatize(content_tokens[j])
+                content_tokens[j] = normalizer.convert(content_tokens[j])
+                #print('this cannot be: ' + content_tokens[j])
                 try:
                     li = list.index(content_tokens[j])
                 except ValueError:

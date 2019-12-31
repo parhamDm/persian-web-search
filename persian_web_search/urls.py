@@ -20,6 +20,8 @@ from polls import views
 
 from polls.utils.Indexer import Index
 from polls.utils.Search import Search
+from polls.utils.global_excel import InstanciateExcel
+InstanciateExcel()
 
 i = Index("database/IR-F19-Project01-Input.xlsx","database/stopwords.xlsx", "database/dictionary.txt")
 
