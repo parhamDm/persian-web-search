@@ -8,16 +8,16 @@ from .lemmatizer import Lemmatizer
 from .word import Word
 from .Normalizer import Normalize
 from .wordTokenizer import WordTokenizer
-
+from polls.utils.global_excel import workbook
 
 class Index:
     content_index = 5
-    doc_count = 10
+    # doc_count = 20
 
     def read_file(self, address):
-        loc = (address)
-        wb = xlrd.open_workbook(loc)
-        self.sheet = wb.sheet_by_index(0)
+        # loc = (address)
+        # wb = xlrd.open_workbook(loc)
+        self.sheet = workbook.sheet_by_index(0)
         self.doc_count = self.sheet.nrows - 1
         # for i in range(sheet.ncols):
         #     print(sheet.cell_value(0, 0))
@@ -142,9 +142,7 @@ class Index:
             for j in range(len(content_tokens)):
                 if content_tokens[j] == 'ها' or content_tokens[j] == 'می':
                     continue
-                #print('this can be: ' + content_tokens[j])
                 content_tokens[j] = lemmatizer.lemmatize(content_tokens[j])
-                #print('this cannot be: ' + content_tokens[j])
                 try:
                     li = list.index(content_tokens[j])
                 except ValueError:
@@ -210,4 +208,7 @@ class Index:
         if not (Path(destPath).is_file()):
             self.read_file(address)
             self.index(destPath)
+        else:
+            self.doc_count = workbook.sheet_by_index(0).nrows
+
         self.index_from_file(destPath)

@@ -91,6 +91,7 @@ class Normalize:
 
     def twofaced(self,text):
         f = fileReader("database/twoface.xlsx")
+        # f = fileReader("../../database/twoface.xlsx")
         sheet = f.read_file()
         for i in range(sheet.nrows):
             if sheet.cell_value(i,1) in text:
